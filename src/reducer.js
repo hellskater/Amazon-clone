@@ -1,3 +1,5 @@
+//import FlipMove from "react-flip-move";
+
 export const initialState = {
   basket: [],
   user: null,

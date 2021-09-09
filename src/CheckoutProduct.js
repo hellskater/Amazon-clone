@@ -1,16 +1,17 @@
 import React from "react";
 import "./CheckoutProduct.css";
 import { useStateValue } from "./StateProvider";
+import "../node_modules/bootstrap/dist/css/bootstrap.min.css";
 
 function CheckoutProduct({ id, image, title, price, rating }) {
-    const [{ basket }, dispatch] = useStateValue();
+  const [{ basket }, dispatch] = useStateValue();
 
-    const removeFromCart = () => {
-        dispatch({
-            type: 'REMOVE_FROM_CART',
-            id: id
-        })
-    }
+  const removeFromCart = () => {
+    dispatch({
+      type: "REMOVE_FROM_CART",
+      id: id,
+    });
+  };
 
   return (
     <div className="checkoutProduct">
