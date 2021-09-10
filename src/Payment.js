@@ -7,9 +7,10 @@ import { useStateValue } from "./StateProvider";
 import CurrencyFormat from "react-currency-format";
 import { basketTotal } from "./reducer";
 import axios from "./axios";
+import { db } from "./firebase";
 
 function Payment() {
-  const [{ basket, user }] = useStateValue();
+  const [{ basket, user }, dispatch] = useStateValue();
   const history = useHistory();
 
   const stripe = useStripe();
@@ -37,8 +38,6 @@ function Payment() {
     getClientSecret();
   }, [basket]); // It will re-render when the basket changes
 
-  console.log("THE SECRET IS: ", clientSecret);
-
   const handleSubmit = async (event) => {
     // Do all the fancy stripe stuff
     event.preventDefault();
@@ -53,9 +52,23 @@ function Payment() {
       .then(({ paymentIntent }) => {
         // paymentIntent = Payment Confirmation
 
+        db.collection("users")
+          .doc(user?.uid)
+          .collection("orders")
+          .doc(paymentIntent.id)
+          .set({
+            basket: basket,
+            amount: paymentIntent.amount,
+            created: paymentIntent.created,
+          });
+
         setSucceeded(true);
         setError(null);
         setProcessing(false);
+
+        dispatch({
+          type: "EMPTY_BASKET",
+        });
 
         history.replace("/orders"); // Because you don't want people to come back to the payment page when they press the back button
       });
